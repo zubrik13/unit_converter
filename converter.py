@@ -1,7 +1,4 @@
-import re
-from abc import ABCMeta, abstractmethod
-
-from dict import prefix, units
+from dict import prefix, units, kwords
 
 
 class Parser:
@@ -11,85 +8,103 @@ class Parser:
     # def __init__(self, converter):
     #     self.converter = converter
 
+    @staticmethod
+    def split(arg_):
+
+        for key in kwords.keys():
+            try:
+                if key != arg_[0]: # eliminate "m" match for "mega" prefix
+                    if key in arg_:
+                        arg_ = arg_.replace(key, "-" + key + "-")
+                        return arg_
+            except KeyError:
+                print("This unit is not supported, please use either Distance or Data units.")
+
     def parse(self, inp):
-        # num = re.findall(r"\d+", inp)
-        # units = re.findall(r"[a-z]+", inp.lower())
 
         data = inp.lower().split()
-        from_ = data[1].split("-")
-        to_ = data[2].split("-")
+        arg_1 = self.split(data[1])
+        arg_2 = self.split(data[2])
 
-        # amount = num[0]
-        #
+        from_ = arg_1.split("-")
+        to_ = arg_2.split("-")
+
         amount = data[0]
         if len(from_) > 1:
-            prefix_from = from_[0]
-            unit_from = from_[1]
+            from_prefix = from_[0]
+            from_unit = from_[1]
         else:
-            prefix_from = None
-            unit_from = from_[0]
+            from_prefix = None
+            from_unit = from_[0]
 
         if len(to_) > 1:
-            prefix_to = to_[0]
-            unit_to = to_[1]
+            to_prefix = to_[0]
+            to_unit = to_[1]
         else:
-            prefix_to = None
-            unit_to = to_[0]
+            to_prefix = None
+            to_unit = to_[0]
 
-        # prefix_from =
-        # c_from = units[0]
-        # prefix_to =
-        # c_to = units[1]
-
-        return amount, prefix_from, unit_from, prefix_to, unit_to
+        return amount, from_prefix, from_unit, to_prefix, to_unit
 
 
 class Converter:
     """ Units converter"""
 
-    # def __init__(self, units):
+    # def __init__(self, units, parent: Converter = None):
     #     self.units = units
-
-    def convert(self, data):
-        # print(data[0], data[1], data[2])
-        global res
+    #     self.parent = parent
+    @staticmethod
+    def parser(data):
 
         # parse data
-        amount = int(data[0])
-        prefix_from = prefix[data[1]]
-        unit_from = data[2]
-        prefix_to = prefix[data[3]]
-        unit_to = data[4]
+        num = int(data[0])
+        from_prefix = prefix[data[1]]
+        from_unit = data[2]
+        to_prefix = prefix[data[3]]
+        to_unit = data[4]
 
-        # print(amount, prefix_from, unit_from, prefix_to, unit_to)
+        si_factor = from_prefix / to_prefix
+        amount = num * si_factor
 
-        exp = (unit_from, unit_to)
-        inv = (unit_to, unit_from)
-        si_factor = prefix_from / prefix_to
+        return amount, from_unit, to_unit
+
+    @staticmethod
+    def convert(parser_out):
+        amount = parser_out[0]
+        from_unit = parser_out[1]
+        to_unit = parser_out[2]
+        exp = (from_unit, to_unit)
+        inv = (to_unit, from_unit)
 
         if exp in units:
-            res = amount * units[exp] * si_factor
+            return print(f"{amount * units[exp]} {to_unit}")
 
-        return print(f"{res} {unit_to}")
+        return None
+
+    def supports(self, from_unit, to_unit):
+        pattern = (from_unit, to_unit)
+        if pattern in units:
+            return True
+
+        return False
+
+    def result(self, data):
+        parse = self.parser(data)
+        self.convert(parse)
+
 
 if __name__ == "__main__":
     # payload = "100 k-meTer n-fEet"
-    payload = "100 kilo-meTer mega-fEet"
+    payload = "100 kilomeTer meGaFeet"
     # payload = "100 meTer fEet"
-
-    # test = prefix["Y"]
-    # print(test)
 
     inp = Parser().parse(payload)
     # print(inp)
-    Converter().convert(inp)
-    # print(r)
+    Converter().result(inp)
 
-    # num = re.findall(r'\d+', payload)
-    # units = re.findall(r"[a-z]+", payload.lower())
-    # print(num[0])
-    # print(units)
-    # print(type(num[0]))
+
+
+
 
 """
 import os.path
@@ -131,5 +146,10 @@ if not l.isdigit():
     sys.exit()
 
 L = int(l)
+
+        # num = re.findall(r"\d+", inp)
+        # units = re.findall(r"[a-z]+", inp.lower())
+
+
 
 """

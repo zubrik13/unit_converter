@@ -26,6 +26,9 @@ class Parser:
         arg_1 = self.split(data[1])
         arg_2 = self.split(data[2])
 
+        print(arg_1)
+        print(arg_2)
+
         from_ = arg_1.split("-")
         to_ = arg_2.split("-")
 
@@ -94,12 +97,14 @@ class Converter:
 
 
 if __name__ == "__main__":
-    # payload = "100 k-meTer n-fEet"
-    payload = "100 kilomeTer meGaFeet"
+    # payload = "100 kmeTer nfEet"
+    payload = "100 meTer fEet"
+
+    # payload = "100 kilomeTer petafeet"
     # payload = "100 meTer fEet"
 
     inp = Parser().parse(payload)
-    # print(inp)
+    print(inp)
     Converter().result(inp)
 
 

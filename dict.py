@@ -1,25 +1,26 @@
 prefix = {
     None: 1,
-    "y": 1e-24, "yocto": 1e-24, # yocto
-    "z": 1e-21, "zepto": 1e-21, # zepto
-    "a": 1e-18, "atto": 1e-18, # atto
-    "f": 1e-15, "femto": 1e-15, # femto
-    "p": 1e-12, "pico": 1e-12, # pico
-    "n": 1e-9, "nano": 1e-9, # nano
-    "u": 1e-6, "micro": 1e-6, # micro
-    "m": 1e-3,  "milli": 1e-3,# milli
-    "c": 1e-2, "centi": 1e-2, # centi
-    "d": 1e-1, "deci": 1e-1, # deci
-    "da": 1e1, "deca": 1e1, # deca
-    "h": 1e2, "hecto": 1e2, # hecto
-    "k": 1e3, "kilo": 1e3, # kilo
-    "M": 1e6, "mega": 1e6, # mega
-    "G": 1e9, "giga": 1e9, # giga
-    "T": 1e12, "tera": 1e12, # tera
-    "P": 1e15, "peta": 1e15, # peta
-    "E": 1e18, "exa": 1e18, # exa
-    "Z": 1e21, "zetta": 1e21, # zetta
-    "Y": 1e24, "yotta": 1e24, # yotta
+    "nautical": 1.1507771465,
+    "y": 1e-24, "yocto": 1e-24,
+    "z": 1e-21, "zepto": 1e-21,
+    "a": 1e-18, "atto": 1e-18,
+    "f": 1e-15, "femto": 1e-15,
+    "p": 1e-12, "pico": 1e-12,
+    "n": 1e-9, "nano": 1e-9,
+    "u": 1e-6, "micro": 1e-6,
+    "m": 1e-3,  "milli": 1e-3,
+    "c": 1e-2, "centi": 1e-2,
+    "d": 1e-1, "deci": 1e-1,
+    "da": 1e1, "deca": 1e1,
+    "h": 1e2, "hecto": 1e2,
+    "k": 1e3, "kilo": 1e3,
+    "M": 1e6, "mega": 1e6,
+    "G": 1e9, "giga": 1e9,
+    "T": 1e12, "tera": 1e12,
+    "P": 1e15, "peta": 1e15,
+    "E": 1e18, "exa": 1e18,
+    "Z": 1e21, "zetta": 1e21,
+    "Y": 1e24, "yotta": 1e24,
     "Yi": 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
     "Zi": 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
     "Ei": 1024 * 1024 * 1024 * 1024 * 1024 * 1024,
@@ -41,14 +42,19 @@ binary_prefix = {
     "Ki": 1024
 }
 
-
-
 units = {
-    ("meter", "feet"): 3.28,
-    # ("meter", "foot"): 3.28
+    ("meter", "meter"): 1,
+    ("inch", "inch"): 1,
+    ("yard", "yard"): 1,
+    ("mile", "mile"): 1,
+    ("meter", "inch"): 39.37007874,
+    ("meter", "feet"): 3.280839895,
+    ("meter", "foot"): 3.280839895,
+    ("meter", "yard"): 1.0936132983,
+    ("meter", "mile"): 0.0006213712,
+    ("meter", "nautical mile"): 0.0005399568,
 
 }
-
 
 kwords = {
     "meter": None,
@@ -57,10 +63,13 @@ kwords = {
     "in": None,
     "feet": None,
     "foot": None,
-    "ft": None
+    "ft": None,
+    "yard": None,
+    "yd": None,
+    "nautical mile": None,
+    "mile": None,
 
 }
-
 
 
 """

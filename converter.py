@@ -20,6 +20,7 @@ class Parser:
         to_ = data[2].split("-")
 
         # amount = num[0]
+        #
         amount = data[0]
         if len(from_) > 1:
             prefix_from = from_[0]
@@ -81,7 +82,7 @@ if __name__ == "__main__":
 
     inp = Parser().parse(payload)
     # print(inp)
-    r = Converter().convert(inp)
+    Converter().convert(inp)
     # print(r)
 
     # num = re.findall(r'\d+', payload)

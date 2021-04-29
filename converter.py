@@ -1,82 +1,125 @@
-from dict import prefix, units, kwords
+from dict import prefix, units, si_units, kwords
 
 
 class Parser:
-    """ Split input into chunks to process"""
-
+    """ Split input into chunks"""
     # def __init__(self, converter: Converter):
     # def __init__(self, converter):
     #     self.converter = converter
 
     @staticmethod
     def split_(arg_):
-
-        for key in kwords.keys():
+        """
+        Static method to split input data into prefix (if exists) and unit based on known patterns stored
+        in kwords dictionary
+        :param arg_: user input; str
+        :return: list containing prefix and unit; list of str
+        """
+        for key, val in kwords.items():
             try:
-                if key != arg_[0]: # eliminate "m" match for "mega" prefix
-                    if key in arg_:
-                        arg_ = arg_.replace(key, "-" + key + "-")
+                for pattern in val:
+                    if pattern in arg_:
+                        arg_ = arg_.replace(pattern, "-" + pattern + "-")
+                        arg_ = arg_.split("-")
                         return arg_
             except KeyError:
                 print("This unit is not supported, please use either Distance or Data units.")
 
-    def parse(self, inp):
-
-        data = inp.lower().split()
+    def parse_(self, inp):
+        """
+        Method to parse user input data to make equation in general form:
+        amount, prefix, initial unit, prefix, target unit
+        :param inp: 3 arguments - amount, initial unit, target unit; str
+        :return: 5 arguments - amount, prefix, initial unit, prefix, target unit; str
+        """
+        # parse initial data
+        data = inp.split()
         arg_1 = self.split_(data[1])
         arg_2 = self.split_(data[2])
 
-        from_ = arg_1.split("-")
-        to_ = arg_2.split("-")
-
         amount = data[0]
-        from_unit = from_[1]
-        to_unit = to_[1]
+        from_unit = arg_1[1]
+        to_unit = arg_2[1]
 
-        if len(from_[0]) == 0:
+        # check if prefix defined
+        if len(arg_1[0]) == 0:
             from_prefix = None
         else:
-            from_prefix = from_[0]
+            from_prefix = arg_1[0]
 
-        if len(to_[0]) == 0:
+        if len(arg_2[0]) == 0:
             to_prefix = None
         else:
-            to_prefix = to_[0]
+            to_prefix = arg_2[0]
 
         return amount, from_prefix, from_unit, to_prefix, to_unit
 
 
 class Converter:
     """ Units converter"""
-
     # def __init__(self, units, parent: Converter = None):
     #     self.units = units
     #     self.parent = parent
     @staticmethod
-    def parser(data):
-
-        # parse data
+    def parser_(data):
+        """
+        Intermediate method to reduce a number of input arguments from Parser class
+        by multiplication of amount and scale factor arguments:
+        amount = num * (from_prefix / to_prefix)
+        Output prefix argument is defined to be used in final output
+        :param data: 5 arguments - amount, from_prefix, from_unit, to_prefix, to_unit; str
+        :return: amount, from_unit, to_unit, out_prefix; float, str, str, str
+        """
         num = int(data[0])
         from_prefix = prefix[data[1]]
         from_unit = data[2]
         to_prefix = prefix[data[3]]
+        out_prefix = data[3]
         to_unit = data[4]
 
         si_factor = from_prefix / to_prefix
         amount = num * si_factor
 
-        return amount, from_unit, to_unit
+        if out_prefix is None:
+            out_prefix = ""
+        # print(out_prefix)
+
+        return amount, from_unit, to_unit, out_prefix
 
     @staticmethod
-    def convert(parser_out):
+    def alias_(dict_, search_val):
+        """
+        Method to ensure simplified syntax support.
+        Looks for alias patterns stored in dictionary
+        :param dict_: name of dictionary where supported patterns stored; dict
+        :param search_val: pattern to look for; str
+        :return: standardised output pattern; str
+        """
+        for key, val in dict_.items():
+            if search_val in val:
+                return key
+
+    def convert_(self, parser_out):
+        """
+        Method to make final calculation of previously parsed data
+        :param parser_out: 4 arguments - amount, from_unit, to_unit, out_prefix
+        :return: 2 arguments - conversion value, output unit; float, str
+        """
         amount = parser_out[0]
-        from_unit = parser_out[1]
-        to_unit = parser_out[2]
+        from_unit = self.alias_(kwords, parser_out[1])
+        to_unit = self.alias_(kwords, parser_out[2])
+        to_prefix = self.alias_(si_units, parser_out[3])
+
         exp = (from_unit, to_unit)
         inv = (to_unit, from_unit)
 
+        if to_prefix is None:
+            to_prefix = ""
+
         if exp in units:
-            return print(f"{amount * units[exp]} {to_unit}")
+            return print(f"{amount * units[exp]:.7f} {to_prefix}{to_unit}")
+        elif inv in units:
+            return print(f"{amount / units[inv]:.7f} {to_prefix}{to_unit}")
 
         return None
 
@@ -88,25 +131,28 @@ class Converter:
         return False
 
     def result(self, data):
-        parse = self.parser(data)
-        self.convert(parse)
+        """
+        Method to trigger data conversion
+        :param data: 5 arguments - amount, from_prefix, from_unit, to_prefix, to_unit; str
+        :return: 2 arguments - conversion value, output unit; float, str
+        """
+        parse = self.parser_(data)
+        self.convert_(parse)
 
 
 if __name__ == "__main__":
     # payload = "100 kmeTer nfEet"
-    payload = "100 meTer meTer"
-    # payload = "100 meTer fEet"
+    # payload = "1 nauticalmile meter"
+    # payload = "1 microleague millifoot"
+    # payload = "1 ft fur"
+    # payload = "100 kilometer dafeet"
+    # payload = "1 ft m"
+    # payload = "10 kbyte Mb"
+    payload = "100 Mibit MiB"
 
-    # payload = "100 kilomeTer petafeet"
-    # payload = "100 meTer fEet"
-
-    inp = Parser().parse(payload)
+    inp = Parser().parse_(payload)
     print(inp)
     Converter().result(inp)
-
-
-
-
 
 """
 import os.path

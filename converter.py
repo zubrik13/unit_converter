@@ -1,12 +1,75 @@
+import sys
+import argparse
+
 from dict import prefix, units, si_units, kwords
+
+
+class Inputs:
+    """ Check if input is valid"""
+    def split(self, arg_):
+        """
+        Static method to split input data into prefix (if exists) and unit based on known patterns stored
+        in kwords dictionary
+        :param arg_: user input; str
+        :return: list containing prefix and unit; list of str
+        """
+        for key, val in kwords.items():
+            try:
+                for pattern in val:
+                    if pattern in arg_:
+                        arg_ = arg_.replace(pattern, "-" + pattern + "-")
+                        arg_ = arg_.split("-")
+                        return arg_
+            except KeyError:
+                print("This unit is not supported, please use either Distance or Data units.")
+
+    def parse(self, inp):
+        """
+        Method to parse user input data into prefix and unit
+        :param inp: user input; str
+        :return: 2 arguments - prefix, unit; str
+        """
+        arg_ = self.split(inp)
+
+        if arg_ is None:
+            return False
+
+        prefix = arg_[0]
+        unit = arg_[1]
+
+        return prefix, unit
+
+    @staticmethod
+    def alias(dict_, search_val):
+        """
+        Method looks for alias patterns stored in dictionary
+        :param dict_: name of dictionary where supported patterns stored; dict
+        :param search_val: pattern to look for; str
+        :return: standardised output pattern if known; str or None
+        """
+        for key, val in dict_.items():
+            if search_val in val:
+                return key
+
+    def is_valid(self, parser_out):
+        """
+        Method to check if input is valid
+        :param parser_out: 2 arguments - prefix, unit
+        :return: True or False
+        """
+        if len(parser_out[0]) == 0:
+            return True
+        else:
+            prefix = self.alias(si_units, parser_out[0])
+
+        if prefix is None:
+            return False
+
+        return True
 
 
 class Parser:
     """ Split input into chunks"""
-    # def __init__(self, converter: Converter):
-    # def __init__(self, converter):
-    #     self.converter = converter
-
     @staticmethod
     def split_(arg_):
         """
@@ -57,9 +120,6 @@ class Parser:
 
 class Converter:
     """ Units converter"""
-    # def __init__(self, units, parent: Converter = None):
-    #     self.units = units
-    #     self.parent = parent
     @staticmethod
     def parser_(data):
         """
@@ -68,7 +128,7 @@ class Converter:
         amount = num * (from_prefix / to_prefix)
         Output prefix argument is defined to be used in final output
         :param data: 5 arguments - amount, from_prefix, from_unit, to_prefix, to_unit; str
-        :return: amount, from_unit, to_unit, out_prefix; float, str, str, str
+        :return: amount, from_unit, to_unit, out_prefix; str
         """
         num = int(data[0])
         from_prefix = prefix[data[1]]
@@ -82,7 +142,6 @@ class Converter:
 
         if out_prefix is None:
             out_prefix = ""
-        # print(out_prefix)
 
         return amount, from_unit, to_unit, out_prefix
 
@@ -123,13 +182,6 @@ class Converter:
 
         return None
 
-    def supports(self, from_unit, to_unit):
-        pattern = (from_unit, to_unit)
-        if pattern in units:
-            return True
-
-        return False
-
     def result(self, data):
         """
         Method to trigger data conversion
@@ -140,64 +192,73 @@ class Converter:
         self.convert_(parse)
 
 
+def arg_check(arg_):
+    """
+    Method to validate input
+    :param arg_: user input; str
+    :return: True or False
+    """
+    split = Inputs().split(arg_)
+    if split:
+        parse = Inputs().parse(arg_)
+    else:
+        return False
+
+    convert = Inputs().is_valid(parse)
+    if convert:
+        return True
+
+    return False
+
 if __name__ == "__main__":
-    # payload = "100 kmeTer nfEet"
-    # payload = "1 nauticalmile meter"
-    # payload = "1 microleague millifoot"
-    # payload = "1 ft fur"
-    # payload = "100 kilometer dafeet"
-    # payload = "1 ft m"
-    # payload = "10 kbyte Mb"
-    payload = "100 Mibit MiB"
 
-    inp = Parser().parse_(payload)
-    print(inp)
+    # Check No of arguments entered
+    if len(sys.argv) > 4:
+        print('You have specified too many arguments')
+        sys.exit()
+
+    # Add parser
+    parser = argparse.ArgumentParser(description="Process conversion input data")
+
+    parser.add_argument("Amount",
+                        metavar="amount",
+                        type=str,
+                        help="amount to convert")
+
+    parser.add_argument("Arg1",
+                        metavar="from_unit",
+                        type=str,
+                        help="unit to convert from")
+
+    parser.add_argument("Arg2",
+                        metavar="to_unit",
+                        type=str,
+                        help="unit to convert to")
+
+    args = parser.parse_args()
+
+    amount = args.Amount
+    arg1 = args.Arg1
+    arg2 = args.Arg2
+
+    # Check inputs
+    if not amount.isdigit():
+        print(f"Please enter an integer value, {amount} - is not an integer")
+        sys.exit()
+
+    if arg_check(arg1):
+        pass
+    else:
+        print(f"Please enter valid unit {arg1} - is not supported")
+        sys.exit()
+
+    if arg_check(arg2):
+        pass
+    else:
+        print(f"Please enter valid unit {arg2} - is not supported")
+        sys.exit()
+
+    input_str = f"{amount} {arg1} {arg2}"
+
+    inp = Parser().parse_(input_str)
     Converter().result(inp)
-
-"""
-import os.path
-import sys
-import argparse
-
-# Check No of arguments entered
-if len(sys.argv) > 2:
-    print('You have specified too many arguments')
-    sys.exit()
-
-# Add parser
-parser = argparse.ArgumentParser(description="Process DNA input data")
-
-parser.add_argument("Path",
-                    metavar='file_path',
-                    type=str,
-                    help='the path to list')
-
-parser.add_argument("Length",
-                    metavar="piece_length",
-                    type=str,
-                    help="the piece length")
-
-args = parser.parse_args()
-
-file_path = args.Path
-l = args.Length
-
-# Check if file exists
-if not os.path.isfile(file_path):
-    print("File does not exist. Please enter a valid file path")
-    print("\n".join(os.listdir(file_path)))
-    sys.exit()
-
-# Check if input is digit
-if not l.isdigit():
-    print(f"Please enter an integer value, {l} - is not an integer")
-    sys.exit()
-
-L = int(l)
-
-        # num = re.findall(r"\d+", inp)
-        # units = re.findall(r"[a-z]+", inp.lower())
-
-
-
-"""

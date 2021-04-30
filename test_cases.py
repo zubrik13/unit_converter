@@ -20,5 +20,5 @@ test_cases = [
 if __name__ == "__main__":
 
     for item in test_cases:
-        data = Parser().parse_(item)
-        Converter().result(data)
+        data = Parser().parse(item)
+        print(Converter().result(data))

@@ -1,71 +1,112 @@
 <!DOCTYPE html>
 <html lang="eng">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Index|unit converter</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-	<link rel="stylesheet" type="text/css" href="../static/index.css">
-<!--	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Index|unit converter</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <!--	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">-->
 </head>
-<body class="">
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+<body>
+<!-- Error messages -->
+<div class="text-center">
+    {% for error in form.amount.errors %}
+    <div id="alert" class="alert alert-danger alert-dismissible fade show">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+</div>
+<div class="text-center">
+    {% for error in form.from_unit.errors %}
+    <div id="alert" class="alert alert-danger alert-dismissible fade show">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+</div>
+<div class="text-center">
+    {% for error in form.to_unit.errors %}
+    <div id="alert" class="alert alert-danger alert-dismissible fade show">
+        {{ error }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+</div>
 <!-- NAVBAR -->
 <nav class="navbar bg-dark">
-	<div class="flex-column mx-auto text-light">
-		<h2 class="">Basic unit converter</h2>
-	</div>
-
+    <div class="flex-column mx-auto text-light">
+        <h2 class="">Basic unit converter</h2>
+    </div>
 </nav>
-<!-- NAVBAR -->
-<!--ENDING OF HEADER ================================================================-->
 <!-- ALERT MESSAGE -->
 <div class="text-center">
-	{% for category, message in get_flashed_messages(with_categories=True) %}
-	<div id="alert" class="alert alert-{{ category }} alert-dismissible fade show">
-		{{ message }}
-		<button type="button" class="close" data-dismiss="alert">&times;</button>
-	</div>
-	{% endfor %}
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+    <div id="alert" class="alert alert-{{ category }} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
 </div>
 <section class="min-vh-100 text-center">
-	<div class="container rounded opacity-6">
-		<div class="flex-column mx-auto">
-			<!-- Login button -->
-			<div class="">
-<!--				<p>Result is here</p>-->
-				<div class="form-group">
-					<input name="amount" class="form-control" id="amount" placeholder="Amount" required>
-				</div>
-				<div class="form-group">
-					<input name="from" class="form-control" id="from_unit" placeholder="Unit convert from" required>
-				</div>
-				<div class="form-group">
-					<input name="to" class="form-control" id="to_unit" placeholder="Unit convert to" required>
-				</div>
-				<a href="">
-					<button type="submit" id class="btn btn-s btn-outline-dark">
-					Convert
-					</button>
-				</a>
-			</div>
-		</div>
-	</div>
-	<div class="res mx-auto opacity-6 rounded mt-3">
-		<p>Result is here</p>
-	</div>
+    <div class="container rounded opacity-6">
+        <form class="needs-validation" novalidate method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <input name="amount" class="form-control" id="amount" placeholder="Amount" required>
+            </div>
+            <div class="form-group">
+                <input name="from_unit" class="form-control" id="from_unit" placeholder="Unit convert from" required>
+            </div>
+            <div class="form-group">
+                <input name="to_unit" class="form-control" id="to_unit" placeholder="Unit convert to" required>
+            </div>
+            <a href="">
+                <button type="submit" id class="btn btn-s btn-outline-dark">
+                    Convert
+                </button>
+            </a>
+        </form>
+        </div>
+    </div>
+    <div class="res mx-auto opacity-6 rounded mt-3">
+        <p>{{ amount }} {{ arg1 }} {{ text }} {{ arg2 }}</p>
+        <p>{{ result }}</p>
+    </div>
 </section>
 <!-- Footer -->
 <footer class="footer">
-	<!-- Copyright -->
-	<div class="bg-dark text-light text-center py-3">© 2021 Copyright:
-		<a href="https://getbootstrap.com/">Bootstrap</a>
-		by @zubrik
-	</div>
+    <!-- Copyright -->
+    <div class="bg-dark text-light text-center py-3">© 2021 Copyright:
+        <a href="https://getbootstrap.com/">Bootstrap</a>
+        by @zubrik
+    </div>
 </footer>
 <!-- Footer -->
 </body>

@@ -1,14 +1,14 @@
 import sys
 import argparse
-
 from dict import prefix, units, si_units, kwords
 
 
 class Inputs:
-    """ Check if input is valid"""
+    """ Checks if user input is valid"""
+
     def split(self, arg_):
         """
-        Static method to split input data into prefix (if exists) and unit based on known patterns stored
+        Method to split input data into prefix (if exists) and unit based on known patterns stored
         in kwords dictionary
         :param arg_: user input; str
         :return: list containing prefix and unit; list of str
@@ -39,8 +39,7 @@ class Inputs:
 
         return prefix, unit
 
-    @staticmethod
-    def alias(dict_, search_val):
+    def alias(self, dict_, search_val):
         """
         Method looks for alias patterns stored in dictionary
         :param dict_: name of dictionary where supported patterns stored; dict
@@ -53,7 +52,7 @@ class Inputs:
 
     def is_valid(self, parser_out):
         """
-        Method to check if input is valid
+        Method to check if user input is valid
         :param parser_out: 2 arguments - prefix, unit
         :return: True or False
         """
@@ -69,36 +68,19 @@ class Inputs:
 
 
 class Parser:
-    """ Split input into chunks"""
-    @staticmethod
-    def split_(arg_):
-        """
-        Static method to split input data into prefix (if exists) and unit based on known patterns stored
-        in kwords dictionary
-        :param arg_: user input; str
-        :return: list containing prefix and unit; list of str
-        """
-        for key, val in kwords.items():
-            try:
-                for pattern in val:
-                    if pattern in arg_:
-                        arg_ = arg_.replace(pattern, "-" + pattern + "-")
-                        arg_ = arg_.split("-")
-                        return arg_
-            except KeyError:
-                print("This unit is not supported, please use either Distance or Data units.")
+    """ Split user input into chunks"""
 
-    def parse_(self, inp):
+    def parse(self, inp):
         """
         Method to parse user input data to make equation in general form:
         amount, prefix, initial unit, prefix, target unit
         :param inp: 3 arguments - amount, initial unit, target unit; str
         :return: 5 arguments - amount, prefix, initial unit, prefix, target unit; str
         """
-        # parse initial data
+        # parse user input
         data = inp.split()
-        arg_1 = self.split_(data[1])
-        arg_2 = self.split_(data[2])
+        arg_1 = Inputs().split(data[1])
+        arg_2 = Inputs().split(data[2])
 
         amount = data[0]
         from_unit = arg_1[1]
@@ -121,7 +103,7 @@ class Parser:
 class Converter:
     """ Units converter"""
     @staticmethod
-    def parser_(data):
+    def parse(data):
         """
         Intermediate method to reduce a number of input arguments from Parser class
         by multiplication of amount and scale factor arguments:
@@ -145,29 +127,16 @@ class Converter:
 
         return amount, from_unit, to_unit, out_prefix
 
-    @staticmethod
-    def alias_(dict_, search_val):
-        """
-        Method to ensure simplified syntax support.
-        Looks for alias patterns stored in dictionary
-        :param dict_: name of dictionary where supported patterns stored; dict
-        :param search_val: pattern to look for; str
-        :return: standardised output pattern; str
-        """
-        for key, val in dict_.items():
-            if search_val in val:
-                return key
-
-    def convert_(self, parser_out):
+    def convert(self, parser_out):
         """
         Method to make final calculation of previously parsed data
         :param parser_out: 4 arguments - amount, from_unit, to_unit, out_prefix
         :return: 2 arguments - conversion value, output unit; float, str
         """
         amount = parser_out[0]
-        from_unit = self.alias_(kwords, parser_out[1])
-        to_unit = self.alias_(kwords, parser_out[2])
-        to_prefix = self.alias_(si_units, parser_out[3])
+        from_unit = Inputs().alias(kwords, parser_out[1])
+        to_unit = Inputs().alias(kwords, parser_out[2])
+        to_prefix = Inputs().alias(si_units, parser_out[3])
 
         exp = (from_unit, to_unit)
         inv = (to_unit, from_unit)
@@ -176,9 +145,9 @@ class Converter:
             to_prefix = ""
 
         if exp in units:
-            return print(f"{amount * units[exp]:.7f} {to_prefix}{to_unit}")
+            return f"{amount * units[exp]:.7f} {to_prefix}{to_unit}"
         elif inv in units:
-            return print(f"{amount / units[inv]:.7f} {to_prefix}{to_unit}")
+            return f"{amount / units[inv]:.7f} {to_prefix}{to_unit}"
 
         return None
 
@@ -188,8 +157,9 @@ class Converter:
         :param data: 5 arguments - amount, from_prefix, from_unit, to_prefix, to_unit; str
         :return: 2 arguments - conversion value, output unit; float, str
         """
-        parse = self.parser_(data)
-        self.convert_(parse)
+        parse = self.parse(data)
+        result = self.convert(parse)
+        return result
 
 
 def arg_check(arg_):
@@ -260,5 +230,5 @@ if __name__ == "__main__":
 
     input_str = f"{amount} {arg1} {arg2}"
 
-    inp = Parser().parse_(input_str)
-    Converter().result(inp)
+    inp = Parser().parse(input_str)
+    print(Converter().result(inp))

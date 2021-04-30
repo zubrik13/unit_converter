@@ -1,0 +1,57 @@
+/**/
+html, body {
+	background-image: url(./figs/pic5.jpeg);
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+section {
+	margin-top: 160px;
+}
+
+.container {
+	width: 300px !important;
+	height: 260px !important;
+	background: white;
+	align-items: center;
+	padding: 30px;
+}
+
+.res {
+	width: 300px !important;
+	height: 40px !important;
+	background: white;
+	align-items: center;
+	padding: 10px;
+
+}
+
+.btn-info {
+	cursor: pointer;
+	width: 40px;
+	height: 40px;
+}
+
+.btn-s {
+	width: 240px;
+}
+
+/* opacity levels*/
+.opacity-5 {
+	opacity:0.5!important;
+}
+.opacity-6 {
+	opacity:0.6!important;
+}
+.opacity-7 {
+	opacity:0.7!important;
+}
+.opacity-8 {
+	opacity:0.8!important;
+}
+.opacity-9 {
+	opacity:0.9!important;
+}
+.opacity-10 {
+	opacity:1!important;
+}

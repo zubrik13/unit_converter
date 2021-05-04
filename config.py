@@ -3,7 +3,7 @@ from os import getenv
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config(object):
+class Config:
     DEBUG = False
     WTF_CSRF_ENABLED = True
     DEBUG_TB_ENABLED = False

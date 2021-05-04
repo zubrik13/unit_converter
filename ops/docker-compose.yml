@@ -1,0 +1,12 @@
+version: "3.1"
+services:
+
+  app:
+    image: zubrik/unit_converter:latest
+    restart: unless-stopped
+    command: bash -c "./run_docker.sh"
+    environment:
+      SECRET_KEY: z+xJ2JKT6R16
+      APP_SETTINGS: config.ProductionConfig
+    ports:
+      - "5000:5000"

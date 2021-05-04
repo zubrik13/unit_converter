@@ -1,12 +1,13 @@
 import sys
 import argparse
-from dict import prefix, units, si_units, kwords
+from supported_units import prefix, units, si_units, kwords
 
 
 class Inputs:
     """ Checks if user input is valid"""
 
-    def split(self, arg_):
+    @staticmethod
+    def split(arg_):
         """
         Method to split input data into prefix (if exists) and unit based on known patterns stored
         in kwords dictionary
@@ -23,13 +24,14 @@ class Inputs:
             except KeyError:
                 print("This unit is not supported, please use either Distance or Data units.")
 
-    def parse(self, inp):
+    @staticmethod
+    def parse(inp):
         """
         Method to parse user input data into prefix and unit
         :param inp: user input; str
         :return: 2 arguments - prefix, unit; str
         """
-        arg_ = self.split(inp)
+        arg_ = Inputs.split(inp)
 
         if arg_ is None:
             return False
@@ -39,7 +41,8 @@ class Inputs:
 
         return prefix, unit
 
-    def alias(self, dict_, search_val):
+    @staticmethod
+    def alias(dict_, search_val):
         """
         Method looks for alias patterns stored in dictionary
         :param dict_: name of dictionary where supported patterns stored; dict
@@ -50,7 +53,8 @@ class Inputs:
             if search_val in val:
                 return key
 
-    def is_valid(self, parser_out):
+    @staticmethod
+    def is_valid(parser_out):
         """
         Method to check if user input is valid
         :param parser_out: 2 arguments - prefix, unit
@@ -59,7 +63,7 @@ class Inputs:
         if len(parser_out[0]) == 0:
             return True
         else:
-            prefix = self.alias(si_units, parser_out[0])
+            prefix = Inputs.alias(si_units, parser_out[0])
 
         if prefix is None:
             return False
@@ -70,7 +74,8 @@ class Inputs:
 class Parser:
     """ Split user input into chunks"""
 
-    def parse(self, inp):
+    @staticmethod
+    def parse(inp):
         """
         Method to parse user input data to make equation in general form:
         amount, prefix, initial unit, prefix, target unit
@@ -79,8 +84,8 @@ class Parser:
         """
         # parse user input
         data = inp.split()
-        arg_1 = Inputs().split(data[1])
-        arg_2 = Inputs().split(data[2])
+        arg_1 = Inputs.split(data[1])
+        arg_2 = Inputs.split(data[2])
 
         amount = data[0]
         from_unit = arg_1[1]
@@ -127,16 +132,17 @@ class Converter:
 
         return amount, from_unit, to_unit, out_prefix
 
-    def convert(self, parser_out):
+    @staticmethod
+    def convert(parser_out):
         """
         Method to make final calculation of previously parsed data
         :param parser_out: 4 arguments - amount, from_unit, to_unit, out_prefix
         :return: 2 arguments - conversion value, output unit; float, str
         """
         amount = parser_out[0]
-        from_unit = Inputs().alias(kwords, parser_out[1])
-        to_unit = Inputs().alias(kwords, parser_out[2])
-        to_prefix = Inputs().alias(si_units, parser_out[3])
+        from_unit = Inputs.alias(kwords, parser_out[1])
+        to_unit = Inputs.alias(kwords, parser_out[2])
+        to_prefix = Inputs.alias(si_units, parser_out[3])
 
         exp = (from_unit, to_unit)
         inv = (to_unit, from_unit)
@@ -151,14 +157,15 @@ class Converter:
 
         return None
 
-    def result(self, data):
+    @staticmethod
+    def result(data):
         """
         Method to trigger data conversion
         :param data: 5 arguments - amount, from_prefix, from_unit, to_prefix, to_unit; str
         :return: 2 arguments - conversion value, output unit; float, str
         """
-        parse = self.parse(data)
-        result = self.convert(parse)
+        parse = Converter.parse(data)
+        result = Converter.convert(parse)
         return result
 
 
@@ -168,13 +175,13 @@ def arg_check(arg_):
     :param arg_: user input; str
     :return: True or False
     """
-    split = Inputs().split(arg_)
+    split = Inputs.split(arg_)
     if split:
-        parse = Inputs().parse(arg_)
+        parse = Inputs.parse(arg_)
     else:
         return False
 
-    convert = Inputs().is_valid(parse)
+    convert = Inputs.is_valid(parse)
     if convert:
         return True
 
@@ -230,5 +237,5 @@ if __name__ == "__main__":
 
     input_str = f"{amount} {arg1} {arg2}"
 
-    inp = Parser().parse(input_str)
-    print(Converter().result(inp))
+    inp = Parser.parse(input_str)
+    print(Converter.result(inp))

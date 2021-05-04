@@ -29,7 +29,7 @@ prefix = {
     "Pi": 1024 * 1024 * 1024 * 1024 * 1024,
     "Ti": 1024 * 1024 * 1024 * 1024,
     "Gi": 1024 * 1024 * 1024,
-    "Mi": 1024 * 1024,
+    "Mi": 1024 ** 2,
     "Ki": 1024
 }
 
@@ -78,6 +78,11 @@ units = {
     ("bit", "bit"): 1,
     ("byte", "byte"): 1,
     ("byte", "bit"): 8,
+    # WEIGHTS
+    ("gram", "gram"): 1,
+    ("pound", "pound"): 1,
+    ("gram", "pound"): 0.00220462,
+
 }
 
 # alias dictionary for units
@@ -90,10 +95,13 @@ kwords = {
     "furlong": ["furlong", "fur"],
     "mile": ["mile", "mi"],
     "league": ["league", "lea"],
-    "meter": ["meter", "m"],
+    "meter": ["meter"],
     # DATA
     "byte": ["byte", "B"],
     "bit": ["bit", "b"],
+    # WEIGHTS
+    "gram": ["gram"],
+    "pound": ["pound"]
 }
 
 # alias dictionary for output prefix

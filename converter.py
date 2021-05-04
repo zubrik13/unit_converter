@@ -102,6 +102,8 @@ class Parser:
         else:
             to_prefix = arg_2[0]
 
+        print(from_unit)
+
         return amount, from_prefix, from_unit, to_prefix, to_unit
 
 

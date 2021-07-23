@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.9.6-slim-buster
 ENV PORT 5000
 
 ADD . /app

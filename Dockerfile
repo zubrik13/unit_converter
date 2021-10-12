@@ -1,4 +1,4 @@
-FROM python:slim
+FROM python:3.11.0a1-slim-bullseye
 ENV PORT 5000
 
 ADD . /app
